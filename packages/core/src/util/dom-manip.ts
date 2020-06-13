@@ -117,12 +117,14 @@ export function removeElement(el: HTMLElement) {
 // ----------------------------------------------------------------------------------------------------------------
 
 // from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-const matchesMethod =
-  Element.prototype.matches ||
-  (Element.prototype as any).matchesSelector ||
-  (Element.prototype as any).msMatchesSelector
+const matchesMethod = function(s) {
+  let matches = (this.document || this.ownerDocument).querySelectorAll(s)
+  let i = matches.length
+  while (--i >= 0 && matches.item(i) !== this) {}
+  return i > -1
+}
 
-const closestMethod = Element.prototype.closest || function(selector) {
+const closestMethod = function (selector) {
   // polyfill
   let el = this
   if (!document.documentElement.contains(el)) {
